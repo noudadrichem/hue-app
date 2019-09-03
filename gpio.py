@@ -1,16 +1,35 @@
 import RPi.GPIO as GPIO
 from time import sleep
-import urllib.request
+import requests
 
-API_URL = 'http://192.168.178.32:9094'
+API_URL = 'http://192.168.178.39:9094'
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD) 
-GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(8, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-while True:  # Run forever
-    if GPIO.input(10) == GPIO.HIGH:
-        print("Button was pushed!")
-        sleep(10)
-        f = urllib.request.urlopen("http://stackoverflow.com")
-        print(f.read())
+pinsEndpoints = [
+        {
+            'pin': 10,
+            'endpoint': '/room-toggle'
+        },     
+        {
+            'pin': 8,
+            'endpoint': '/room-scene/Vibing'
+        }
+]
+
+def togglePin(pinNum, endpoint):
+    input_state = GPIO.input(pinNum)
+    if input_state == False:
+        response = requests.get(API_URL + endpoint)
+        print('btn pressed', response.text)
+
+while True:
+    for i in range(len(pinsEndpoints)):
+        togglePin(pinsEndpoints[i]['pin'], pinsEndpoints[i]['endpoint'])
+    sleep(0.2)
+
+
+

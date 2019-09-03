@@ -5,7 +5,7 @@ from flask import Flask
 
 bridge = Bridge('192.168.178.28')
 
-ROOM = 'The room'
+ROOM = 'Room'
 
 connected = bridge.connect()
 
@@ -13,8 +13,6 @@ state = bridge.get_api()
 
 app = Flask(__name__)
 LIGHTS = bridge.get_light_objects()
-
-
 @app.route('/room-on')
 def roomOn():
     bridge.set_group(ROOM, 'on', True)
