@@ -8,6 +8,7 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD) 
 GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(8, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 pinsEndpoints = [
         {
@@ -17,18 +18,24 @@ pinsEndpoints = [
         {
             'pin': 8,
             'endpoint': '/room-scene/Vibing'
+        },
+        {
+            'pin': 12,
+            'endpoint': '/room-scene/Relax'
         }
 ]
 
 def togglePin(pinNum, endpoint):
     input_state = GPIO.input(pinNum)
     if input_state == False:
+        print('doing req too: ' + API_URL + endpoint)
         response = requests.get(API_URL + endpoint)
         print('btn pressed', response.text)
 
 while True:
     for i in range(len(pinsEndpoints)):
         togglePin(pinsEndpoints[i]['pin'], pinsEndpoints[i]['endpoint'])
+
     sleep(0.2)
 
 
